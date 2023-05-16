@@ -7,10 +7,10 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 public class CardsPage {
-    private SelenideElement refillFirstBalance = $ ( "[data-test-id=action-deposit]");
+    private SelenideElement refillFirstBalance = $("[data-test-id=action-deposit]");
 
-    private SelenideElement refillSecondBalance = $ ( "[data-test-id=action-deposit]");
-    private SelenideElement messageError = $ ( "[data-test-id=error-notification]");
+    private SelenideElement refillSecondBalance = $("[data-test-id=action-deposit]");
+    private SelenideElement messageError = $("[data-test-id=error-notification]");
     private SelenideElement reloadButton = $("[data-test-id=action-reload]");
 
 
