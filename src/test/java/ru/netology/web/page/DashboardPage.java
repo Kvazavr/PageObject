@@ -24,6 +24,7 @@ public class DashboardPage {
 
         heading.shouldBe(visible);
     }
+
     public int getFirstCardBalance() {
         val text = cards.first().text();
         int balance = extractBalance(text);
@@ -37,5 +38,10 @@ public class DashboardPage {
         return Integer.parseInt(value);
     }
 
+    public int getSecondCardBalance() {
+        val text = cards.get(1).text();
+        int balance = extractBalance(text);
+        return balance;
+    }
 
 }
