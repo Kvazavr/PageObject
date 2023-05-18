@@ -3,11 +3,11 @@ package ru.netology.web.page;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import lombok.val;
+import ru.netology.web.data.DataHelper;
 
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
-import static com.codeborne.selenide.impl.Html.text;
 
 public class DashboardPage {
     private SelenideElement heading = $("[data-test-id=dashboard]");
@@ -42,6 +42,24 @@ public class DashboardPage {
         val text = cards.get(1).text();
         int balance = extractBalance(text);
         return balance;
+    }
+    public TransferPage depositFirstCard() {
+        $$("[data-test-id=action-deposit]").get(0).click();
+        return new TransferPage();
+    }
+    public TransferPage depositSecondCard() {
+        $$("[data-test-id=action-deposit]").get(1).click();
+        return new TransferPage();
+    }
+    public void setInitialBalances(){
+
+        int currentBalance = getFirstCardBalance();
+        int depositBalance = 10000-currentBalance;
+        if (depositBalance > 0){
+            depositFirstCard().deposit(depositBalance, DataHelper.secondCardNumber());
+        } else if (depositBalance < 0) {
+            depositSecondCard().deposit(-depositBalance, DataHelper.firstCardNumber());
+        }
     }
 
 }

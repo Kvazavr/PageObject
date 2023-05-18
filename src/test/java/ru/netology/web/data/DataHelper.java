@@ -31,19 +31,15 @@ public class DataHelper {
         return new VerificationCode("12345");
     }
 
-    @Value
-    public static class CardInfo {
-        private String cardNumber;
-        private int balance;
+    public static String firstCardNumber() {
+
+       String number = "5559 0000 0000 0001";
+       return number;
     }
 
-    public static CardInfo getFirstCardInfo() {
+    public static String secondCardNumber() {
 
-        return new CardInfo("5559 0000 0000 0001", 10_000);
-    }
-
-    public static CardInfo getSecondCardInfo() {
-
-        return new CardInfo("5559 0000 0000 0002", 10_000);
+        String number = "5559 0000 0000 0002";
+        return number;
     }
 }

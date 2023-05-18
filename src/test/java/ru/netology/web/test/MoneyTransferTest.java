@@ -7,9 +7,6 @@ import org.junit.jupiter.api.Test;
 import ru.netology.web.data.DataHelper;
 import ru.netology.web.page.DashboardPage;
 import ru.netology.web.page.LoginPageV1;
-import ru.netology.web.page.ТransferPage;
-import ru.netology.web.page.LoginPageV2;
-import ru.netology.web.page.LoginPageV3;
 
 import static com.codeborne.selenide.Selenide.*;
 
@@ -58,15 +55,10 @@ class MoneyTransferTest {
         var verificationPage = loginPage.validLogin(authInfo);
         var verificationCode = DataHelper.getValidVerificationCodeFor();
         DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        $$("[data-test-id=action-deposit]").get(0).click();
-        $x("//*[contains(text(), 'Пополнение карты')]").shouldBe(Condition.visible);
-        $("[data-test-id=to] .input__control").getAttribute("**** **** **** 0001");
-        $("[data-test-id=amount] input").setValue("2000");
-        $("[data-test-id=from] input").setValue("5559 0000 0000 0002");
-        $("[data-test-id=action-transfer]").click();
-        $("h1").shouldHave(Condition.text("Ваши карты"));
-
-
+        dashboardPage.setInitialBalances();
+        int actual = dashboardPage.depositFirstCard().deposit(500,"5559 0000 0000 0002")
+                .getFirstCardBalance();
+        Assertions.assertEquals(10500, actual);
 
     }
     @Test
@@ -98,8 +90,8 @@ class MoneyTransferTest {
         $("[data-test-id=to] .input__control").getAttribute("**** **** **** 0001");
         int balance = dashboardPage.getSecondCardBalance();
 
-        $("[data-test-id=amount] input").setValue();
-        $("[data-test-id=from] input").setValue("5559 0000 0000 0002");
+        $("[data-test-id=amount] input").setValue(null);
+        $("[data-test-id=from] input").setValue("5559 0000 0000 0001");
         $("[data-test-id=action-transfer]").click();
         $("h1").shouldHave(Condition.text("Ваши карты"));
     }
