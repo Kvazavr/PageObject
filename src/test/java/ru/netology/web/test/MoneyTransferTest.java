@@ -12,7 +12,7 @@ import static com.codeborne.selenide.Selenide.*;
 
 class MoneyTransferTest {
     @Test
-    void shouldTransferMoneyBetweenOwnCardsV1() {
+    void shouldTransferMoneyBetweenOwnCards() {
         open("http://localhost:9999");
         var loginPage = new LoginPageV1();
         var authInfo = DataHelper.getValidAuthInfo();

@@ -14,11 +14,6 @@ public class DashboardPage {
     private ElementsCollection cards = $$(".list__item div");
     private final String balanceStart = "баланс: ";
     private final String balanceFinish = " р.";
-//    private SelenideElement refillFirstBalance = $("[data-test-id=action-deposit](0)");
-//
-//    private SelenideElement refillSecondBalance = $("[data-test-id=action-deposit](1)");
-//    private SelenideElement messageError = $("[data-test-id=error-notification]");
-//    private SelenideElement reloadButton = $("[data-test-id=action-reload]");
 
     public DashboardPage() {
 
