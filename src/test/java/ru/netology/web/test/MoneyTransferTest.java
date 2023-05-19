@@ -291,36 +291,36 @@ class MoneyTransferTest {
         Assertions.assertEquals(10000, actual2);
     }
 
-//    @Test
-//    void transferAmountMoreThanRestOnTheSecondCard() {
-//        open("http://localhost:9999");
-//        var loginPage = new LoginPageV1();
-//        var authInfo = DataHelper.getValidAuthInfo();
-//        var verificationPage = loginPage.validLogin(authInfo);
-//        var verificationCode = DataHelper.getValidVerificationCodeFor();
-//        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-//        dashboardPage.setInitialBalances();
-//        int actual1 = dashboardPage.depositFirstCard().deposit(12000, "5559 0000 0000 0002")
-//                .getFirstCardBalance();
-//        Assertions.assertEquals(10000, actual1);
-//        int actual2 = dashboardPage.getSecondCardBalance();
-//        Assertions.assertEquals(10000, actual2);
-//    }
-//    @Test
-//    void transferAmountMoreThanRestOnTheFirstCard() {
-//        open("http://localhost:9999");
-//        var loginPage = new LoginPageV1();
-//        var authInfo = DataHelper.getValidAuthInfo();
-//        var verificationPage = loginPage.validLogin(authInfo);
-//        var verificationCode = DataHelper.getValidVerificationCodeFor();
-//        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-//        dashboardPage.setInitialBalances();
-//        int actual1 = dashboardPage.depositSecondCard().deposit(12000, "5559 0000 0000 0001")
-//                .getSecondCardBalance();
-//        Assertions.assertEquals(10000, actual1);
-//        int actual2 = dashboardPage.getSecondCardBalance();
-//        Assertions.assertEquals(10000, actual2);
-//    }
+    @Test
+    void transferAmountMoreThanRestOnTheSecondCard() {
+        open("http://localhost:9999");
+        var loginPage = new LoginPageV1();
+        var authInfo = DataHelper.getValidAuthInfo();
+        var verificationPage = loginPage.validLogin(authInfo);
+        var verificationCode = DataHelper.getValidVerificationCodeFor();
+        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
+        dashboardPage.setInitialBalances();
+        int actual1 = dashboardPage.depositFirstCard().deposit(12000, "5559 0000 0000 0002")
+                .getFirstCardBalance();
+        Assertions.assertEquals(10000, actual1);
+        int actual2 = dashboardPage.getSecondCardBalance();
+        Assertions.assertEquals(10000, actual2);
+    }
+    @Test
+    void transferAmountMoreThanRestOnTheFirstCard() {
+        open("http://localhost:9999");
+        var loginPage = new LoginPageV1();
+        var authInfo = DataHelper.getValidAuthInfo();
+        var verificationPage = loginPage.validLogin(authInfo);
+        var verificationCode = DataHelper.getValidVerificationCodeFor();
+        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
+        dashboardPage.setInitialBalances();
+        int actual1 = dashboardPage.depositSecondCard().deposit(12000, "5559 0000 0000 0001")
+                .getSecondCardBalance();
+        Assertions.assertEquals(10000, actual1);
+        int actual2 = dashboardPage.getSecondCardBalance();
+        Assertions.assertEquals(10000, actual2);
+    }
 
 
 
