@@ -31,10 +31,5 @@ public class TransferPage {
         depositButton.click();
         return new DashboardPage();
     }
-    public String destinationCard(){
-        String value = cardTo.getAttribute("value");
-        return value;
-    }
-
 
 }
