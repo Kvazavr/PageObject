@@ -302,9 +302,10 @@ class MoneyTransferTest {
         dashboardPage.setInitialBalances();
         int actual1 = dashboardPage.depositFirstCard().deposit(12000, "5559 0000 0000 0002")
                 .getFirstCardBalance();
-        Assertions.assertEquals(10000, actual1);
         int actual2 = dashboardPage.getSecondCardBalance();
         Assertions.assertEquals(10000, actual2);
+        Assertions.assertEquals(10000, actual1);
+
     }
     @Test
     void transferAmountMoreThanRestOnTheFirstCard() {
@@ -317,9 +318,10 @@ class MoneyTransferTest {
         dashboardPage.setInitialBalances();
         int actual1 = dashboardPage.depositSecondCard().deposit(12000, "5559 0000 0000 0001")
                 .getSecondCardBalance();
-        Assertions.assertEquals(10000, actual1);
         int actual2 = dashboardPage.getSecondCardBalance();
         Assertions.assertEquals(10000, actual2);
+        Assertions.assertEquals(10000, actual1);
+
     }
 
 
