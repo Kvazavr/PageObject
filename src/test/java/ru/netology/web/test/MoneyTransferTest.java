@@ -3,56 +3,44 @@ package ru.netology.web.test;
 
 import com.codeborne.selenide.Condition;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
 import ru.netology.web.data.DataHelper;
 import ru.netology.web.page.DashboardPage;
 import ru.netology.web.page.LoginPageV1;
-
-import java.time.Duration;
+import ru.netology.web.page.TransferPage;
 
 import static com.codeborne.selenide.Selenide.*;
 
 class MoneyTransferTest {
+    DashboardPage dashboardPage;
 
-    @Test
-    void shouldReturnBalanceFirstCard() {
+    @BeforeEach
+    private void successAuth() {
         open("http://localhost:9999");
         var loginPage = new LoginPageV1();
         var authInfo = DataHelper.getValidAuthInfo();
         var verificationPage = loginPage.validLogin(authInfo);
         var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
-        int balance = dashboardPage.getFirstCardBalance();
-        Assertions.assertEquals(10000, balance);
-
+        dashboardPage = verificationPage.validVerify(verificationCode);
+        setInitialBalances(dashboardPage);
     }
 
-    @Test
-    void shouldReturnBalanceSecondCard() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
-        int balance = dashboardPage.getSecondCardBalance();
-        Assertions.assertEquals(10000, balance);
+    private void setInitialBalances(DashboardPage dashboardPage) {
 
+        int currentBalance = dashboardPage.getFirstCardBalance();
+        int depositBalance = 10000 - currentBalance;
+        if (depositBalance > 0) {
+            dashboardPage.depositFirstCard().deposit(depositBalance, DataHelper.secondCardNumber());
+        } else if (depositBalance < 0) {
+            dashboardPage.depositSecondCard().deposit(-depositBalance, DataHelper.firstCardNumber());
+        }
     }
 
     @Test
     void refillFirstCard() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
-        int actual1 = dashboardPage.depositFirstCard().deposit(500, "5559 0000 0000 0002")
+        int actual1 = dashboardPage.depositFirstCard().deposit(500, DataHelper.secondCardNumber())
                 .getFirstCardBalance();
         Assertions.assertEquals(10500, actual1);
         int actual2 = dashboardPage.getSecondCardBalance();
@@ -61,30 +49,17 @@ class MoneyTransferTest {
 
     @Test
     void refillSecondCard() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
-        int actual = dashboardPage.depositSecondCard().deposit(3200, "5559 0000 0000 0001")
+        int actual = dashboardPage.depositSecondCard().deposit(3200, DataHelper.firstCardNumber())
                 .getSecondCardBalance();
         Assertions.assertEquals(13200, actual);
         int actual2 = dashboardPage.getFirstCardBalance();
         Assertions.assertEquals(6800, actual2);
+
     }
 
     @Test
     void transferOfAllAmountFromSecondCard() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
-        int actual1 = dashboardPage.depositFirstCard().deposit(10000, "5559 0000 0000 0002")
+        int actual1 = dashboardPage.depositFirstCard().deposit(10000, DataHelper.secondCardNumber())
                 .getFirstCardBalance();
         Assertions.assertEquals(20000, actual1);
         int actual2 = dashboardPage.getSecondCardBalance();
@@ -93,14 +68,7 @@ class MoneyTransferTest {
 
     @Test
     void transferOfAllAmountFromFirstCard() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
-        int actual1 = dashboardPage.depositSecondCard().deposit(10000, "5559 0000 0000 0001")
+        int actual1 = dashboardPage.depositSecondCard().deposit(10000, DataHelper.firstCardNumber())
                 .getSecondCardBalance();
         Assertions.assertEquals(20000, actual1);
         int actual2 = dashboardPage.getFirstCardBalance();
@@ -109,14 +77,7 @@ class MoneyTransferTest {
 
     @Test
     void boundaryValueInTheRestByFirstCard() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
-        int actual1 = dashboardPage.depositSecondCard().deposit(9999, "5559 0000 0000 0001")
+        int actual1 = dashboardPage.depositSecondCard().deposit(9999, DataHelper.firstCardNumber())
                 .getSecondCardBalance();
         Assertions.assertEquals(19999, actual1);
         int actual2 = dashboardPage.getFirstCardBalance();
@@ -125,14 +86,7 @@ class MoneyTransferTest {
 
     @Test
     void boundaryValueInTheRestBySecondCard() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
-        int actual1 = dashboardPage.depositFirstCard().deposit(9999, "5559 0000 0000 0002")
+        int actual1 = dashboardPage.depositFirstCard().deposit(9999, DataHelper.secondCardNumber())
                 .getFirstCardBalance();
         Assertions.assertEquals(19999, actual1);
         int actual2 = dashboardPage.getSecondCardBalance();
@@ -141,14 +95,7 @@ class MoneyTransferTest {
 
     @Test
     void transfer1RubFromFirstCard() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
-        int actual1 = dashboardPage.depositSecondCard().deposit(1, "5559 0000 0000 0001")
+        int actual1 = dashboardPage.depositSecondCard().deposit(1, DataHelper.firstCardNumber())
                 .getSecondCardBalance();
         Assertions.assertEquals(10001, actual1);
         int actual2 = dashboardPage.getFirstCardBalance();
@@ -157,14 +104,7 @@ class MoneyTransferTest {
 
     @Test
     void transfer1RubFromSecondCard() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
-        int actual1 = dashboardPage.depositFirstCard().deposit(1, "5559 0000 0000 0002")
+        int actual1 = dashboardPage.depositFirstCard().deposit(1, DataHelper.secondCardNumber())
                 .getFirstCardBalance();
         Assertions.assertEquals(10001, actual1);
         int actual2 = dashboardPage.getSecondCardBalance();
@@ -173,40 +113,19 @@ class MoneyTransferTest {
 
     @Test
     void emptyFieldFromForFirstCard() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
         dashboardPage.depositFirstCard().deposit(500, "");
-        $("[data-test-id=error-notification]").shouldBe(Condition.visible);
+        new TransferPage().checkErrorVisible();
     }
 
     @Test
     void emptyFieldFromForSecondCard() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
         dashboardPage.depositSecondCard().deposit(500, "");
-        $("[data-test-id=error-notification]").shouldBe(Condition.visible);
+        new TransferPage().checkErrorVisible();
     }
 
     @Test
     void emptyFieldAmount() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
-        int actual1 = dashboardPage.depositFirstCard().deposit(0, "5559 0000 0000 0002")
+        int actual1 = dashboardPage.depositFirstCard().deposit(0, DataHelper.secondCardNumber())
                 .getFirstCardBalance();
         Assertions.assertEquals(10000, actual1);
         int actual2 = dashboardPage.getSecondCardBalance();
@@ -215,17 +134,10 @@ class MoneyTransferTest {
 
     @Test
     void clickCancel() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
-        $("[data-test-id=action-deposit]").click();
-        $("[data-test-id=amount] input").setValue("300");
-        $("[data-test-id=from] input").setValue("5559 0000 0000 0002");
-        $("[data-test-id=action-cancel]").click();
+        TransferPage transferPage = dashboardPage.depositFirstCard();
+        transferPage.setAmount(300);
+        transferPage.setSourceCard(DataHelper.secondCardNumber());
+        new TransferPage().clickCancel();
         int actual1 = dashboardPage.getFirstCardBalance();
         Assertions.assertEquals(10000, actual1);
         int actual2 = dashboardPage.getSecondCardBalance();
@@ -234,57 +146,31 @@ class MoneyTransferTest {
 
     @Test
     void invalidCardNumber() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
-        dashboardPage.depositSecondCard().deposit(500, "1111 2222 3333 1234");
-        $("[data-test-id=error-notification]").shouldBe(Condition.visible);
+        dashboardPage.depositSecondCard().deposit(500, DataHelper.invalidCardNumber());
+        new TransferPage().checkErrorVisible();
     }
 
     @Test
     void specialSymbolAndLettersInAmountField() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
-        $("[data-test-id=action-deposit]").click();
-        $("[data-test-id=amount] input").sendKeys(Keys.CONTROL + "A");
-        $("[data-test-id=amount] input").sendKeys(Keys.DELETE);
-        $("[data-test-id=amount] input").setValue("-+/").shouldBe(Condition.empty);
-        $("[data-test-id=amount] input").setValue("asdf").shouldBe(Condition.empty);
+        TransferPage transferPage = dashboardPage.depositFirstCard();
+        transferPage.amount.sendKeys(Keys.CONTROL + "A");
+        transferPage.amount.sendKeys(Keys.DELETE);
+        transferPage.amount.setValue("-+/").shouldBe(Condition.empty);
+        transferPage.amount.setValue("asdf").shouldBe(Condition.empty);
     }
+
     @Test
     void transferFromFirstCardToTheSame() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
-        int actual1 = dashboardPage.depositFirstCard().deposit(2000, "5559 0000 0000 0001")
+        int actual1 = dashboardPage.depositFirstCard().deposit(2000, DataHelper.firstCardNumber())
                 .getFirstCardBalance();
         Assertions.assertEquals(10000, actual1);
         int actual2 = dashboardPage.getSecondCardBalance();
         Assertions.assertEquals(10000, actual2);
     }
+
     @Test
     void transferFromSecondCardToTheSame() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
-        int actual1 = dashboardPage.depositSecondCard().deposit(2000, "5559 0000 0000 0002")
+        int actual1 = dashboardPage.depositSecondCard().deposit(2000, DataHelper.secondCardNumber())
                 .getSecondCardBalance();
         Assertions.assertEquals(10000, actual1);
         int actual2 = dashboardPage.getSecondCardBalance();
@@ -293,37 +179,23 @@ class MoneyTransferTest {
 
     @Test
     void transferAmountMoreThanRestOnTheSecondCard() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
-        int actual1 = dashboardPage.depositFirstCard().deposit(12000, "5559 0000 0000 0002")
+        int actual1 = dashboardPage.depositFirstCard().deposit(12000, DataHelper.secondCardNumber())
                 .getFirstCardBalance();
         int actual2 = dashboardPage.getSecondCardBalance();
         Assertions.assertEquals(10000, actual2);
         Assertions.assertEquals(10000, actual1);
 
     }
+
     @Test
     void transferAmountMoreThanRestOnTheFirstCard() {
-        open("http://localhost:9999");
-        var loginPage = new LoginPageV1();
-        var authInfo = DataHelper.getValidAuthInfo();
-        var verificationPage = loginPage.validLogin(authInfo);
-        var verificationCode = DataHelper.getValidVerificationCodeFor();
-        DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-        dashboardPage.setInitialBalances();
-        int actual1 = dashboardPage.depositSecondCard().deposit(12000, "5559 0000 0000 0001")
+        int actual1 = dashboardPage.depositSecondCard().deposit(12000, DataHelper.firstCardNumber())
                 .getSecondCardBalance();
         int actual2 = dashboardPage.getSecondCardBalance();
         Assertions.assertEquals(10000, actual2);
         Assertions.assertEquals(10000, actual1);
 
     }
-
 
 
 }

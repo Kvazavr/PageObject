@@ -46,15 +46,5 @@ public class DashboardPage {
         $$("[data-test-id=action-deposit]").get(1).click();
         return new TransferPage();
     }
-    public void setInitialBalances(){
-
-        int currentBalance = getFirstCardBalance();
-        int depositBalance = 10000-currentBalance;
-        if (depositBalance > 0){
-            depositFirstCard().deposit(depositBalance, DataHelper.secondCardNumber());
-        } else if (depositBalance < 0) {
-            depositSecondCard().deposit(-depositBalance, DataHelper.firstCardNumber());
-        }
-    }
 
 }

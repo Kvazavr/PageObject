@@ -38,4 +38,8 @@ public class DataHelper {
         String number = "5559 0000 0000 0002";
         return number;
     }
+    public static String invalidCardNumber() {
+        String number = "1111 2222 3333 1234";
+        return number;
+    }
 }
